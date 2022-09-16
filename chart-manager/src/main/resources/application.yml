@@ -1,0 +1,18 @@
+
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.lansee.**.entity
+  global-config:
+    db-config:
+      capital-mode: false #是否开启大写命名
+      id-type: auto #ID设为数据库自增
+    banner: false
+
+spring:
+  profiles:
+    active: dev
+#    active: prod
+

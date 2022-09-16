@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mongcent.risk.manager.mapper.TQaDetailMapper">
+  <resultMap id="BaseResultMap" type="com.mongcent.risk.manager.entity.TQaDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="robot_id" jdbcType="INTEGER" property="robotId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="question" jdbcType="VARCHAR" property="question" />
+    <result column="answer_status" jdbcType="INTEGER" property="answerStatus" />
+    <result column="questions" jdbcType="VARCHAR" property="questions" />
+    <result column="answer" jdbcType="VARCHAR" property="answer" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, robot_id, user_id, user_name, question, answer_status, questions, answer, create_time, 
+    update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_qa_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+  <select id="selectByPage"  resultMap="BaseResultMap">
+    SELECT  a.*  FROM `t_qa_detail` a
+    where 1=1
+
+    <if test="answerStatus != null and answerStatus != 0">
+      and  a.answer_status=#{answerStatus}
+    </if>
+
+    <if test="userName != null and userName != '' ">
+      and  a.user_name like concat('%',#{userName},'%')
+    </if>
+
+    <if test="question != null and question != '' ">
+      and  a.question=#{question}
+
+    </if>
+    order by a.id desc limit #{startRow} , #{size}
+  </select>
+
+
+
+
+  <select  id="getCount" resultType="java.lang.Integer">
+    SELECT  count(1)  FROM `t_qa_detail` a
+    where 1=1
+
+    <if test="answerStatus != null and answerStatus != 0">
+      and  a.answer_status=#{answerStatus}
+    </if>
+
+    <if test="userName != null and userName != '' ">
+      and  a.user_name like concat('%',#{userName},'%')
+    </if>
+
+    <if test="question != null and question != '' ">
+      and  a.question=#{question}
+
+    </if>
+  </select>
+
+
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_qa_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.mongcent.risk.manager.entity.TQaDetail" useGeneratedKeys="true">
+    insert into t_qa_detail (robot_id, user_id, user_name, 
+      question, answer_status, questions, 
+      answer, create_time, update_time
+      )
+    values (#{robotId,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{question,jdbcType=VARCHAR}, #{answerStatus,jdbcType=INTEGER}, #{questions,jdbcType=VARCHAR},
+      #{answer,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.mongcent.risk.manager.entity.TQaDetail" useGeneratedKeys="true">
+    insert into t_qa_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="robotId != null">
+        robot_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="question != null">
+        question,
+      </if>
+      <if test="answerStatus != null">
+        answer_status,
+      </if>
+      <if test="questions != null">
+        questions,
+      </if>
+      <if test="answer != null">
+        answer,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="robotId != null">
+        #{robotId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="question != null">
+        #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="answerStatus != null">
+        #{answerStatus,jdbcType=INTEGER},
+      </if>
+      <if test="questions != null">
+        #{questions,jdbcType=VARCHAR},
+      </if>
+      <if test="answer != null">
+        #{answer,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mongcent.risk.manager.entity.TQaDetail">
+    update t_qa_detail
+    <set>
+      <if test="robotId != null">
+        robot_id = #{robotId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="question != null">
+        question = #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="answerStatus != null">
+        answer_status = #{answerStatus,jdbcType=INTEGER},
+      </if>
+      <if test="questions != null">
+        questions = #{questions,jdbcType=VARCHAR},
+      </if>
+      <if test="answer != null">
+        answer = #{answer,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mongcent.risk.manager.entity.TQaDetail">
+    update t_qa_detail
+    set robot_id = #{robotId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      question = #{question,jdbcType=VARCHAR},
+      answer_status = #{answerStatus,jdbcType=INTEGER},
+      questions = #{questions,jdbcType=VARCHAR},
+      answer = #{answer,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

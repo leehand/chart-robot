@@ -1,0 +1,260 @@
+{
+
+  "get_member_location_list": {
+    "uri": "post /api.tnaot.com*/_search",
+    "param": {
+      "_source": [ "clientip", "timestamp_cn","geoip.longitude" ,"geoip.latitude" ,"geoip.region_name" ,"geoip.country_name" ],
+      "query": {
+        "bool": {
+          "must": [{
+            "exists": {
+              "field": "add:{\"yasng\"}"
+            }
+          }],
+          "must_not": [{
+            "term": {
+              "url.keyword": {
+                "value": "/"
+              }
+            }
+          },
+            {
+              "regexp": {
+                "url.keyword": {
+                  "value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"
+                }
+              }
+            }
+          ],
+
+          "filter": [
+            { "term": {"uuid.keyword": {"value": "{{uuid}}"}}},
+            {"range" : {"timestamp_cn" : {"gte" : "now-7d/d",
+              "lte" :  "now/d",
+              "format":"yyyy-MM-dd HH:mm:ss"
+            }}}
+          ]
+        }
+      },
+
+      "size":10000
+
+    }
+  },
+  "get_uri": {
+    "uri": "post /*.tnaot.com*/_search",
+    "param": {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+          ],
+          "must_not": [
+            {"term": {"url.keyword": {"value": "/"}}},
+            {"regexp": {"url.keyword": {"value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"}}}
+          ],
+          "filter": [
+            {"exists": {"field": "uri"}},
+            {"exists": {"field": "url"}},
+            {"exists": {"field": "timestamp_cn"}},
+            {"range" : {"@timestamp" : {"gte" : "now-3d/d"}}}
+          ]
+        }
+      },
+      "aggs": {
+        "group_by_url": {
+          "terms": {
+            "field": "uri.keyword",
+            "size": 1000,
+            "order": {
+              "_count": "desc"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "uri_days": {
+    "uri": "post /*.tnaot.com*/_search",
+    "param": {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+          ],
+          "must_not": [
+            {"term": {"url.keyword": {"value": "/"}}},
+            {"regexp": {"url.keyword": {"value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"}}}
+          ],
+          "filter": [
+            {"term": {"uri.keyword": {"value": "{{uri}}"}}},
+            {"exists": {"field": "uri"}},
+            {"exists": {"field": "url"}},
+            {"exists": {"field": "timestamp_cn"}},
+            {"range" : {"@timestamp" : {"gte" : "now-7d/d",
+              "lt" :  "now/d"
+            }}},
+            {"range" : {
+              "upstreamtime" : {"gt" : 0.000}}}
+          ]
+        }
+      },
+      "aggs": {
+        "group_by_hour": {
+          "terms": {
+            "script": {
+              "source": "long date=  doc['timestamp_cn'].value.getMillis() ;Date date2=new Date(date-3600000); SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');  return sdf.format(date2);"
+            },
+            "size": 30,
+            "order": {
+              "_key": "asc"
+            }
+          },
+          "aggs": {
+            "minTime": {
+              "min": {"field": "upstreamtime"}
+            },
+            "maxTime": {
+              "max": {"field": "upstreamtime"}
+            },
+            "avgTime":{
+              "avg": {"field": "upstreamtime"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "uri_hours": {
+    "uri": "post /*.tnaot.com*/_search",
+    "param": {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+          ],
+          "must_not": [
+            {"term": {"url.keyword": {"value": "/"}}},
+            {"regexp": {"url.keyword": {"value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"}}}
+          ],
+          "filter": [
+            {"term": {"uri.keyword": {"value": "{{uri}}"}}},
+            {"exists": {"field": "uri"}},
+            {"exists": {"field": "url"}},
+            {"exists": {"field": "timestamp_cn"}},
+            {"range" : {"@timestamp" : {"gte" : "now-24h/h",
+              "lt" : "now/h"
+            }}},
+            {"range" : {
+              "upstreamtime" : {"gt" : 0.000}}}
+          ]
+        }
+      },
+      "aggs": {
+        "group_by_hour": {
+          "terms": {
+            "script": {
+              "source": "long date=  doc['timestamp_cn'].value.getMillis() ;Date date2=new Date(date-3600000); SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH');  return sdf.format(date2);"
+            },
+            "size": 50,
+            "order": {
+              "_key": "asc"
+            }
+          },
+          "aggs": {
+            "minTime": {
+              "min": {"field": "upstreamtime"}
+            },
+            "maxTime": {
+              "max": {"field": "upstreamtime"}
+            },
+            "avgTime":{
+              "avg": {"field": "upstreamtime"}
+            }
+          }
+        }
+      }
+    }
+
+
+  },
+  "uri_minutes": {
+    "uri": "post /*.tnaot.com*/_search",
+    "param": {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+          ],
+          "must_not": [
+            {"term": {"url.keyword": {"value": "/"}}},
+            {"regexp": {"url.keyword": {"value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"}}}
+          ],
+          "filter": [
+            {"term": {"uri.keyword": {"value": "{{uri}}"}}},
+            {"exists": {"field": "uri"}},
+            {"exists": {"field": "url"}},
+            {"exists": {"field": "timestamp_cn"}},
+            {"range" : {"@timestamp" : { "gte" : "now-60m/m",
+              "lt" : "now/m"
+            }}},
+            {"range" : {
+              "upstreamtime" : {"gt" : 0.000}}}
+          ]
+        }
+      },
+      "aggs": {
+        "group_by_hour": {
+          "terms": {
+            "script": {
+              "source": "long date=  doc['timestamp_cn'].value.getMillis() ;Date date2=new Date(date-3600000); SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm');  return sdf.format(date2);"
+            },
+            "size": 100,
+            "order": {
+              "_key": "asc"
+            }
+          },
+          "aggs": {
+            "minTime": {
+              "min": {"field": "upstreamtime"}
+            },
+            "maxTime": {
+              "max": {"field": "upstreamtime"}
+            },
+            "avgTime":{
+              "avg": {"field": "upstreamtime"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "user-history":{
+    "uri":"POST /*.tnaot.com*/_search",
+    "param":{
+      "size": 10000,
+      "_source": {
+        "includes": ["timestamp_cn", "url", "uuid"]
+      },
+      "query": {
+        "bool": {
+          "must": [
+          ],
+          "must_not": [
+            {"term": {"url.keyword": {"value": "/"}}},
+            {"regexp": {"url.keyword": {"value": "/.*\\.(js|png|css|ttf|woff|eot|html|txt|ico|properties).*"}}}
+          ],
+          "filter": [
+            {"term" : {"uuid.keyword": "f846bc3780674049bd4936a95f97cc6d"}},
+            {"exists": {"field": "url"}},
+            {"range" : {"@timestamp" : {"gte" : "now-96h"}}}
+          ]
+        }
+      },
+      "sort": [{"timestamp_cn": {"order": "desc"}}]
+    }
+  }
+
+
+}

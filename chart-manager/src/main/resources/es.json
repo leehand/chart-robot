@@ -1,0 +1,30 @@
+{
+  "add_qa":{
+    "method":"PUT",
+    "uri":"PUT /qa_index/_doc/qa_id",
+    "param":{
+      "question":"aa",
+      "similar_names":[],
+      "q_id":"bb"
+    }
+  },
+
+  "search_qa":{
+    "method":"GET",
+    "uri":"PUT /qa_index/_search",
+    "param":{
+      "query": {
+        "multi_match": {
+          "query": "BB",
+          "fields": [
+            "question",
+            "similar_names"
+          ]
+        }
+      },
+      "from": 0,
+      "size":4
+    }
+  }
+
+}

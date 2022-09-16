@@ -1,0 +1,66 @@
+server:
+  port: 12580
+
+
+mongcent:
+  auth:
+    java-host: 120.34.24.114
+
+
+mongcent.statistics.es.esurl: http://elastic:zl123456@43.138.220.67:9201
+
+spring:
+  data:
+    mongodb:
+        source-uri: mongodb://zl:123@172.18.57.41:27017/lanseeSource?connectTimeoutMS=10000&authMechanism=SCRAM-SHA-1
+        statistics-uri: mongodb://zl:123@120.79.23.46:27017/lanseeStatistics?connectTimeoutMS=10000&authMechanism=SCRAM-SHA-1
+  redis:
+    # 地址
+    host: 43.138.220.67
+    # 端口，默认为6379
+    port: 6380
+    # 密码
+    password: 123
+
+  kafka:
+    bootstrap-servers: 120.79.23.46:9092
+    listener:
+      ack-mode: MANUAL_IMMEDIATE
+      type: batch
+      concurrency: 3
+    producer:
+      batch-size: 16384
+      retries: 3
+      acks: all
+      properties:
+        # 连不上时的超时
+        max.block.ms: 1000
+        request.timeout.ms: 3000
+        max.request.size: 10485760
+
+    consumer:
+      enable-auto-commit: false
+      auto-commit-interval: 5S
+      max-poll-records: 50
+      group-id: data_collect
+      auto-offset-reset: latest
+
+  datasource:
+    dynamic:
+      primary: repdate #设置默认的数据源或者数据源组,默认值即为master
+      datasource:
+        repdate:
+          username: zl
+          password: zl666666
+          url: jdbc:mysql://120.79.23.46:3306/repdate?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        app:
+          username: zl
+          password: zl666666
+          url: jdbc:mysql://120.79.23.46:3306/app?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+
+es_index: question_answer_robot
