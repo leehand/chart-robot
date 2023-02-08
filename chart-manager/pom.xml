@@ -12,6 +12,12 @@
     <artifactId>chart-manager</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>client</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
 
 
         <dependency>
