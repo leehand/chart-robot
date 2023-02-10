@@ -107,7 +107,7 @@ public class DingdingController2 {
 	@RequestMapping(value = "/dingding/robots", method = RequestMethod.POST)
 	public String helloRobots(@RequestBody(required = false) JSONObject json) throws Exception {
 //		System.out.println(JSON.toJSONString(json));
-        LOGGER.info("报文",JSON.toJSONString(json));
+        LOGGER.info(JSON.toJSONString(json));
 		JSONObject text= json.getJSONObject("text");
 		String content = text.getString("content");
 		Integer page = text.getInteger("page");
