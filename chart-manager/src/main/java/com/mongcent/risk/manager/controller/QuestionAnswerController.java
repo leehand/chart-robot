@@ -1,33 +1,16 @@
 package com.mongcent.risk.manager.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.alibaba.fastjson.JSON;
 import com.mongcent.core.commons.constant.ApiResult;
-import com.mongcent.risk.manager.entity.TCategory;
 import com.mongcent.risk.manager.entity.TQuestionAnswer;
 import com.mongcent.risk.manager.entity.vo.PageBean;
-import com.mongcent.risk.manager.mapper.TCategoryMapper;
 import com.mongcent.risk.manager.service.robot.*;
-import com.mongcent.risk.manager.util.ExcelTool;
-import com.mongcent.risk.manager.util.MD5Util;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller
@@ -126,7 +109,7 @@ public class QuestionAnswerController {
 		PageBean pageBean=new PageBean();
 		pageBean.setPage(page);
 		pageBean.setSize(2);
-		List<TQuestionAnswer> result=	tQuestionAnswerService.searchQuestionAnswers(keyword,pageBean);
+		List<TQuestionAnswer> result=	tQuestionAnswerService.searchquestionanswers(keyword,pageBean);
         if(result.size()==0){
 			return ApiResult.success("亲，您问的问题可以换个方式问哦");
 		}

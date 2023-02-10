@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mongcent.core.commons.constant.ApiResult;
 import com.mongcent.risk.manager.entity.TCategory;
 import com.mongcent.risk.manager.entity.TQuestionAnswer;
 import com.mongcent.risk.manager.entity.vo.PageBean;
@@ -276,7 +275,7 @@ public class TQuestionAnswerService {
     }
 
 
-    public  List<TQuestionAnswer> searchQuestionAnswers(String keyword, PageBean pageBean) {
+    public  List<TQuestionAnswer> searchquestionanswers(String keyword, PageBean pageBean) {
 
 
         JSONObject json = esService.search(keyword,pageBean);

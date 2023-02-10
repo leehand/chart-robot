@@ -15,9 +15,9 @@ import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiGettokenRequest;
 import com.dingtalk.api.response.OapiGettokenResponse;
-import com.mongcent.core.commons.constant.ApiResult;
 import com.mongcent.risk.manager.entity.TQuestionAnswer;
 import com.mongcent.risk.manager.entity.vo.PageBean;
+import com.mongcent.risk.manager.service.gpt.GPTService;
 import com.mongcent.risk.manager.service.robot.TQuestionAnswerService;
 import  java.net.URLEncoder;
 
@@ -44,21 +44,24 @@ import java.util.Map;
  * dingding机器人api
  */
 public class DingdingController2 {
-
+    static String token="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";
 	@Autowired
 	TQuestionAnswerService tQuestionAnswerService;
 
+
+    @Autowired
+    private GPTService gptService;
 //yuanxin
-//	public static final String 		 AgentId= "12539002";
-//	public static final String 		 AppKey= "dingpe3gzuwesjtdhx7i";
-//	public static final String 		 AppSecret= "tnUw33j5KwpAXmew5Q-IsFTmnIDhqUsdCMwFFHSFirsQoYN_PkgHOv9SqMlPLJlz";
+	public static final String 		 AgentId= "12539002";
+	public static final String 		 AppKey= "dingpe3gzuwesjtdhx7i";
+	public static final String 		 AppSecret= "tnUw33j5KwpAXmew5Q-IsFTmnIDhqUsdCMwFFHSFirsQoYN_PkgHOv9SqMlPLJlz";
 
 
 	//leehand
 
-	public static final String 		 AgentId= "14388001";
-	public static final String 		 AppKey= "dinglfrbyyxwkl0qevyf";
-	public static final String 		 AppSecret= "1MhJBFxGZgEW17_x3JgKft0oxSYpQ7-WE2DMeqv9ywtekWDB-JF-Gltu9VXEyaGM";
+//	public static final String 		 AgentId= "14388001";
+//	public static final String 		 AppKey= "dinglfrbyyxwkl0qevyf";
+//	public static final String 		 AppSecret= "1MhJBFxGZgEW17_x3JgKft0oxSYpQ7-WE2DMeqv9ywtekWDB-JF-Gltu9VXEyaGM";
 //	public static final String 		 CardTemplateId= "536b409e-dfd2-44a0-a023-88c961035a65";
 //	public static final String 		 CardTemplateId= "d490cb55-663e-4650-b005-b3a217dbda3b";
 	public static final String 		 CardTemplateId= "e50ec093-1170-4dab-9b57-4fa98f20c9f6";
@@ -111,22 +114,56 @@ public class DingdingController2 {
         pageBean.setPage(page);
         pageBean.setSize(size);
 
+        String result = gptService.getgpt(token, content);
 
 
-        List<TQuestionAnswer> result=	tQuestionAnswerService.searchQuestionAnswers(content,pageBean);
-		if(result.size()<=0 && page==1){
-			sendMessageNoQuestion(userId,robotCode);
-		}else if (result.size()==1 && page==1){
-			sendMessageUnique(userId,robotCode,result);
-		}else{
+        sendMessageGPT(userId,robotCode,result);
+
+	
+		return null;
+	}
+
+
+
+    @RequestMapping(value = "/dingding/robots2", method = RequestMethod.POST)
+    public String helloRobots2(@RequestBody(required = false) JSONObject json) throws Exception {
+        System.out.println(JSON.toJSONString(json));
+
+        JSONObject text= json.getJSONObject("text");
+        String content = text.getString("content");
+        Integer page = text.getInteger("page");
+        String cardUuid = text.getString("cardUuid");
+        String userId = json.get("senderStaffId").toString();
+        String robotCode = json.get("robotCode").toString();
+        //{"text":{"content"："发票"}，"senderStaffId":"2132"}
+        System.out.println(content);
+
+        if(page!=null && page>=1){
+            page=page+1;
+        }else{
+            page=1;
+        }
+
+        PageBean pageBean=new PageBean();
+        pageBean.setPage(page);
+        pageBean.setSize(size);
+
+
+
+        List<TQuestionAnswer> result=	tQuestionAnswerService.searchquestionanswers(content,pageBean);
+        if(result.size()<=0 && page==1){
+            sendMessageNoQuestion(userId,robotCode);
+        }else if (result.size()==1 && page==1){
+            sendMessageUnique(userId,robotCode,result);
+        }else{
 //			sendMessageList(userId,robotCode,result,content);
 
             sendMessage1(userId, robotCode, result, content,cardUuid, pageBean);
 
-		}
-	
-		return null;
-	}
+        }
+
+        return null;
+    }
 
 
 
@@ -156,7 +193,7 @@ public class DingdingController2 {
 
 
 
-        List<TQuestionAnswer> result=	tQuestionAnswerService.searchQuestionAnswers(content,pageBean);
+        List<TQuestionAnswer> result=	tQuestionAnswerService.searchquestionanswers(content,pageBean);
 
         if( page>1) {
             updateCard(userId, robotCode, result, content, cardUuid, pageBean);
@@ -382,6 +419,37 @@ public class DingdingController2 {
 		}
 	}
 
+
+
+    public void sendMessageGPT(String userId,String robotCode,  String result) throws Exception {
+        com.aliyun.dingtalkrobot_1_0.Client client = createClient();
+        BatchSendOTOHeaders batchSendOTOHeaders = new BatchSendOTOHeaders();
+        batchSendOTOHeaders.xAcsDingtalkAccessToken = getAccessToken();
+
+        BatchSendOTORequest batchSendOTORequest = new BatchSendOTORequest()
+                .setRobotCode(robotCode)
+                .setUserIds(java.util.Arrays.asList(
+                        userId
+                ))
+                .setMsgKey("sampleText")
+                .setMsgParam("{\"content\": \""+result+"\"}");
+        try {
+            BatchSendOTOResponse batchSendOTOResponse = client.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new RuntimeOptions());
+        } catch (TeaException err) {
+            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                // err 中含有 code 和 message 属性，可帮助开发定位问题
+                System.out.println(err.code);
+                System.out.println(err.message);
+            }
+        } catch (Exception _err) {
+            TeaException err = new TeaException(_err.getMessage(), _err);
+            if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
+                // err 中含有 code 和 message 属性，可帮助开发定位问题
+                System.out.println(err.code);
+                System.out.println(err.message);
+            }
+        }
+    }
 
 	public void sendMessageUnique(String userId,String robotCode,   List<TQuestionAnswer> list) throws Exception {
 		com.aliyun.dingtalkrobot_1_0.Client client = createClient();
