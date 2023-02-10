@@ -25,6 +25,7 @@ import com.mongcent.risk.manager.util.MD5Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,24 +45,36 @@ import java.util.Map;
  * dingding机器人api
  */
 public class DingdingController2 {
-    static String token="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";
+
 	@Autowired
 	TQuestionAnswerService tQuestionAnswerService;
 
 
     @Autowired
     private GPTService gptService;
-//yuanxin
-	public static final String 		 AgentId= "12539002";
-	public static final String 		 AppKey= "dingpe3gzuwesjtdhx7i";
-	public static final String 		 AppSecret= "tnUw33j5KwpAXmew5Q-IsFTmnIDhqUsdCMwFFHSFirsQoYN_PkgHOv9SqMlPLJlz";
+
+    @Value("${dingding.AgentId}")
+    public  String 	AgentId;
+    @Value("${dingding.AppKey}")
+    public  String 	AppKey;
+    @Value("${dingding.AppSecret}")
+    public  String 	AppSecret;
 
 
-	//leehand
 
+
+    //远信测试
+//	public static final String 		 AgentId= "12539002";
+//	public static final String 		 AppKey= "dingpe3gzuwesjtdhx7i";
+//	public static final String 		 AppSecret= "tnUw33j5KwpAXmew5Q-IsFTmnIDhqUsdCMwFFHSFirsQoYN_PkgHOv9SqMlPLJlz";
+//
+
+	//leehand测试
 //	public static final String 		 AgentId= "14388001";
 //	public static final String 		 AppKey= "dinglfrbyyxwkl0qevyf";
 //	public static final String 		 AppSecret= "1MhJBFxGZgEW17_x3JgKft0oxSYpQ7-WE2DMeqv9ywtekWDB-JF-Gltu9VXEyaGM";
+
+
 //	public static final String 		 CardTemplateId= "536b409e-dfd2-44a0-a023-88c961035a65";
 //	public static final String 		 CardTemplateId= "d490cb55-663e-4650-b005-b3a217dbda3b";
 	public static final String 		 CardTemplateId= "e50ec093-1170-4dab-9b57-4fa98f20c9f6";
@@ -114,7 +127,20 @@ public class DingdingController2 {
         pageBean.setPage(page);
         pageBean.setSize(size);
 
-        String result = gptService.getgpt(token, content);
+        String result ="";
+
+
+        try {
+            result = gptService.getgptByPhp(content);
+        }catch (Exception e2){
+            LOGGER.error("PHP请求报错：",e2);
+            try {
+                result = gptService.getgpt(gptService.token, content);
+            }catch (Exception e){
+                LOGGER.error("直接请求报错：",e);
+            }
+        }
+
 
 
         sendMessageGPT(userId,robotCode,result);

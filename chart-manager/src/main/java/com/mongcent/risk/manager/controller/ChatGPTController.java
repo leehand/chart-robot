@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "gpt/")
 public class ChatGPTController {
-    static String token="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";
+
 
 
     @Autowired
@@ -39,7 +39,7 @@ public class ChatGPTController {
 
         String result="";
 
-        result=gptService.getgptByPhp(keyword);
+        result = gptService.getgpt(gptService.token, keyword);
 
 //        try {
 //            result = gptService.getgpt(token, keyword);

@@ -25,6 +25,8 @@ import java.util.List;
 @Service
 public class GPTService {
 
+   public  static String token="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";
+
    static  CloseableHttpClient httpClient = HttpClients.createDefault();
 
     private static Logger LOGGER = LoggerFactory.getLogger(GPTService.class);
@@ -75,6 +77,7 @@ public class GPTService {
 
 
         String result = doPost(url, parammap.toString());
+        LOGGER.info("content: "+keyword);
         LOGGER.info(result);
 
 

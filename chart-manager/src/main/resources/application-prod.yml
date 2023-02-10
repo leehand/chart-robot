@@ -2,6 +2,12 @@ server:
   port: 12580
 
 
+dingding:
+  AgentId: 17069001
+  AppKey: ding2r1pqfi2ddyuwk6s
+  AppSecret: J7xvh1bFz3YgkeMia1ZXIYnl1H7n1NMHT7scGVyKOVUDtobDcMMPKJe6Jak0QAAr
+
+
 mongcent:
   auth:
     java-host: 120.34.24.114
