@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class GPTService {
 
-   public  static String token="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";
+   public  static String token="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";
 
    static  CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -89,9 +89,11 @@ public class GPTService {
 
     public String doPost(String url ,String json) {
         //创建httpclient对象
-        if(httpClient==null){
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-        }
+//        if(httpClient==null){
+//            CloseableHttpClient httpClient = HttpClients.createDefault();
+//        }
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
 
         CloseableHttpResponse response = null;
         String res = "";
